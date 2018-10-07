@@ -1,3 +1,3 @@
 #!/bin/bash
 
-clang -nostdlib -Wall -fPIC -I../include/pal -L../prebuilt/fedora ../prebuilt/fedora/user_start.o -lpal hello.c -o hello
+clang -nostdlib -Wall -fPIC -I../include/pal -L../prebuilt/fedora-x86_64 ../prebuilt/fedora-x86_64/user_start.o -lpal hello.c -o hello
