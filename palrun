@@ -4,3 +4,4 @@
 
 objcopy --add-section .config=config.ini --set-section-flags .config=contents,readonly palrun.elf runner
 ./runner "$@"
+rm runner
