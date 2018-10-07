@@ -1,0 +1,178 @@
+diff --git a/LibOS/Makefile b/LibOS/Makefile
+index 85fcb7c..f38a4eb 100644
+--- a/LibOS/Makefile
++++ b/LibOS/Makefile
+@@ -12,7 +12,7 @@ GLIBC_TARGET = $(addprefix $(BUILD_DIR)/,libc.so.6 ld-linux-x86-64.so.2 libpthre
+ all: $(GLIBC_TARGET)
+ 	$(MAKE) -C $(SHIM_DIR) all
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ 
+ .INTERMEDIATE: $(BUILD_DIR)/Build.success
+ 
+diff --git a/LibOS/shim/Makefile b/LibOS/shim/Makefile
+index baf25df..c853cbe 100644
+--- a/LibOS/shim/Makefile
++++ b/LibOS/shim/Makefile
+@@ -4,7 +4,7 @@ SYS ?= $(shell gcc -dumpmachine)
+ export SYS
+ 
+ targets = all debug clean
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ targets += pack
+ endif
+ 
+diff --git a/LibOS/shim/include/shim_types.h b/LibOS/shim/include/shim_types.h
+index fe9d9e3..6b05c97 100644
+--- a/LibOS/shim/include/shim_types.h
++++ b/LibOS/shim/include/shim_types.h
+@@ -48,10 +48,10 @@ typedef __kernel_timer_t    timer_t;
+ typedef __kernel_fd_set     fd_set;
+ 
+ /* linux/time.h */
+-struct __kernel_timespec {
+-    __kernel_time_t tv_sec;         /* seconds */
+-    long            tv_nsec;        /* nanoseconds */
+-};
++//struct __kernel_timespec {
++//    __kernel_time_t tv_sec;         /* seconds */
++//    long            tv_nsec;        /* nanoseconds */
++//};
+ 
+ struct __kernel_timeval {
+     __kernel_time_t         tv_sec;         /* seconds */
+diff --git a/LibOS/shim/src/Makefile b/LibOS/shim/src/Makefile
+index 4bbad56..a15ff74 100644
+--- a/LibOS/shim/src/Makefile
++++ b/LibOS/shim/src/Makefile
+@@ -65,7 +65,7 @@ endif
+ $(files_to_install): $(RUNTIME_DIR)/%: %
+ 	cp -f $< $@
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ libsysdb.so: $(addsuffix .o,$(objs)) $(filter %.map %.lds,$(LDFLAGS)) \
+ 	     $(graphene_lib) $(pal_lib)
+ 	@echo [ $@ ]
+diff --git a/LibOS/shim/test/benchmark/Makefile b/LibOS/shim/test/benchmark/Makefile
+index 3a57be9..70b55aa 100644
+--- a/LibOS/shim/test/benchmark/Makefile
++++ b/LibOS/shim/test/benchmark/Makefile
+@@ -13,7 +13,7 @@ include ../Makefile
+ 	rm -rf $@
+ 	cp $@.template $@
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ $(c_executables): %: %.c
+ 	@echo [ $@ ]
+ 	@$(CC) $(CFLAGS) $(if $(findstring .libos,$@),$(CFLAGS-libos),) -o $@ $< \
+diff --git a/LibOS/shim/test/inline/Makefile b/LibOS/shim/test/inline/Makefile
+index 4437313..f73b0df 100644
+--- a/LibOS/shim/test/inline/Makefile
++++ b/LibOS/shim/test/inline/Makefile
+@@ -8,7 +8,7 @@ include ../Makefile
+ 
+ CFLAGS-debug += -fno-builtin -nostdlib
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ $(c_executables): %: %.c $(libs) $(level)../../../Pal/src/user_start.o
+ 	@echo [ $@ ]
+ 	$(CC) $(CFLAGS-debug) $(LDFLAGS-debug) -o $@ $^ -lpal -lsysdb_debug
+diff --git a/LibOS/shim/test/native/Makefile b/LibOS/shim/test/native/Makefile
+index abc8caa..e5c2d96 100644
+--- a/LibOS/shim/test/native/Makefile
++++ b/LibOS/shim/test/native/Makefile
+@@ -1,4 +1,4 @@
+-special_executables = static pie 
++special_executables = static pie
+ c_executables = $(filter-out $(special_executables),$(patsubst %.c,%,$(wildcard *.c)))
+ cxx_executables = $(patsubst %.cpp,%,$(wildcard *.cpp))
+ manifests = $(patsubst %.template,%,$(wildcard *.manifest.template)) manifest
+@@ -11,7 +11,7 @@ include ../Makefile
+ 
+ CFLAGS-libos = -I$(SHIMDIR)/../include -L$(SHIMDIR)/../../glibc-build/libos
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ $(c_executables): %: %.c
+ 	@echo [ $@ ]
+ 	@$(CC) $(CFLAGS) $(if $(findstring .libos,$@),$(CFLAGS-libos),) -o $@ $< \
+@@ -24,7 +24,7 @@ $(cxx_executables): %: %.cpp
+ 
+ static: %: %.c
+ 	@echo [ $@ ]
+-	@$(CC) $(CFLAGS) -o $@ -static $< \
++	@$(CC) $(CFLAGS) -o $@  $< \
+ 	$(shell echo $@ | sed 's/^[^\.]*//g' | sed 's/\./ -l/g')
+ 
+ pie: %: %.c
+diff --git a/LibOS/shim/test/regression/Makefile b/LibOS/shim/test/regression/Makefile
+index 71ae4eb..f04fcf1 100644
+--- a/LibOS/shim/test/regression/Makefile
++++ b/LibOS/shim/test/regression/Makefile
+@@ -16,7 +16,7 @@ default: all
+ level = ../
+ include ../Makefile
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ $(c_executables): %: %.c
+ 	@echo [ $@ ]
+ 	@$(CC) $(CFLAGS) $(if $(findstring .libos,$@),$(CFLAGS-libos),) -o $@ $< \
+diff --git a/Pal/regression/Makefile b/Pal/regression/Makefile
+index 1f94d55..5b5446d 100644
+--- a/Pal/regression/Makefile
++++ b/Pal/regression/Makefile
+@@ -46,7 +46,7 @@ manifest: manifest.template
+ ../src/user_shared_start.o ../src/user_start.o: ../src/user_start.S
+ 	$(MAKE) -C ../src $(notdir $@)
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ $(preloads): %.so: %.so.c ../src/user_shared_start.o \
+ 	$(graphene_lib) $(pal_lib) ../include/pal/pal.h
+ 	@echo [ $@ ]
+diff --git a/Pal/src/Makefile b/Pal/src/Makefile
+index 0aab337..e06c153 100644
+--- a/Pal/src/Makefile
++++ b/Pal/src/Makefile
+@@ -39,7 +39,7 @@ graphene_lib = .lib/graphene-lib.a
+ host_lib = host/$(PAL_HOST)/libpal-$(PAL_HOST).a
+ headers	= $(wildcard *.h) $(wildcard ../lib/*.h) host/$(PAL_HOST)/pal_host.h
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ files_to_build += user_start.o user_shared_start.o
+ endif
+ 
+diff --git a/Pal/src/Makefile.Host b/Pal/src/Makefile.Host
+index fd6ada4..baaa549 100644
+--- a/Pal/src/Makefile.Host
++++ b/Pal/src/Makefile.Host
+@@ -2,7 +2,7 @@ all_hosts = Skeleton Linux Linux-SGX FreeBSD
+ 
+ ifeq ($(PAL_HOST),)
+ SYS := $(shell gcc -dumpmachine)
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ PAL_HOST := Linux
+ else ifeq ($(findstring freebsd,$(SYS)),freebsd)
+ PAL_HOST := FreeBSD
+diff --git a/Pal/test/Makefile b/Pal/test/Makefile
+index 7a208b2..049b872 100644
+--- a/Pal/test/Makefile
++++ b/Pal/test/Makefile
+@@ -36,7 +36,7 @@ manifest: manifest.template
+ %.manifest: %.manifest.template
+ 	cp -f $< $@
+ 
+-ifeq ($(SYS),x86_64-linux-gnu)
++ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
+ $(executables): %: %.c $(graphene_lib) $(pal_lib) ../src/user_start.o
+ 	@echo [ $@ ]
+ 	@$(CC) $(CFLAGS) $(if $(filter Pie,$@),-fPIC -pie,) $^ -o $@
+ 
