@@ -92,6 +92,10 @@ typedef struct {
     PAL_NUM rdi, rsi, rbp, rbx, rdx, rax, rcx;
     PAL_NUM rsp, rip;
     PAL_NUM efl, csgsfs, err, trapno, oldmask, cr2;
+#elif __i386__
+    uint32_t edi, esi, ebp, ebx, edx, eax, ecx;
+    uint32_t esp, eip;
+    uint32_t efl, csgsfs, err, trapno, oldmask, cr2;
 #else
 # error "Unsupported architecture"
 #endif
