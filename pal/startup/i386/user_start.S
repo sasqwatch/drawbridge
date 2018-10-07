@@ -25,7 +25,7 @@ _start:
 	   the outermost frame obviously.  */
 	xorl %ebp, %ebp
 
-	popq %edi		/* Pop the argument count.  */
+	pop %edi		/* Pop the argument count.  */
 
 	/* argv starts just at the current stack top.  */
 	mov %esp, %esi
@@ -34,7 +34,7 @@ _start:
 	and  $~15, %esp
 
 	/* push the exit address on the stack */
-	pushq %edx
+	push %edx
 
 	/* find the environs */
 	lea (%esi,%edi,4), %edx
@@ -47,4 +47,4 @@ _start:
 #endif
 
 	/* return to the exit function */
-	retq
+	ret
