@@ -1,5 +1,7 @@
 #include <pal.h>
-#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
 
 PAL_HANDLE DkStreamOpen (PAL_STR path, PAL_FLG flags, PAL_FLG share, PAL_FLG create_if_not_existing, PAL_FLG options) {
 	if (!strcmp("dev:tty", path) && flags == PAL_ACCESS_WRONLY) {
