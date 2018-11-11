@@ -1,0 +1,106 @@
+upcall:
+
+LibOSInitializeOnStack(
+DK_THREAD_START_PARAMETERS* StartParameters
+DK_LIBOS_INIT_DATA*  InitData
+)
+
+structures:
+
+struct _DK_THREAD_START_PARAMETERS {
+	union {
+		PVOID              Pointer;              /*     0     8 */
+		ULONG64            U64;                  /*     0     8 */
+	} HostParameter;                                 /*     0     8 */
+};
+
+struct _DK_LIBOS_INIT_DATA {
+	ULONG64                    DataLength;           /*     0     8 */
+	ULONG                      ApiVersion;           /*     8     4 */
+	union {
+		const DK_CALL_TABLE  * Pointer;          /*    16     8 */
+		ULONG64            U64;                  /*    16     8 */
+	} CallTable;                                     /*    16     8 */
+
+	union {
+		PDK_UPCALL_TABLE   Pointer;              /*    24     8 */
+		ULONG64            U64;                  /*    24     8 */
+	} UpcallTable;                                   /*    24     8 */
+
+	ULONG64                    UpcallTableMaxLength; /*    32     8 */
+	UNICODE_STRING             StartModuleUri;       /*    40    16 */
+	ULONG64                    StartModuleBaseAddress; /*    56     8 */
+	ULONG64                    StartModuleLength;    /*    64     8 */
+	ULONG64                    ParametersAddress;    /*    72     8 */
+	ULONG64                    ParametersLength;     /*    80     8 */
+	BOOLEAN                    DebuggerPresent;      /*    88     1 */
+
+	ULONGLONG                  UniqueMacID;          /*    96     8 */
+	ULONG                      BootID;               /*   104     4 */
+	union {
+		DK_LIBOS_INIT_DATA_X86 x86;              /*   108    12 */
+		DK_LIBOS_INIT_DATA_X64 x64;              /*   108    16 */
+	} Arch;                                          /*   108    16 */
+};
+
+struct _DK_LIBOS_INIT_DATA_X86 {
+	ULONG                      SegmentSelectorFs;    /*     0     4 */
+	ULONG                      SegmentSelectorCode32; /*     4     4 */
+	ULONG                      SegmentSelectorData;  /*     8     4 */
+};
+struct _DK_LIBOS_INIT_DATA_X64 {
+	ULONG                      SegmentSelectorFs;    /*     0     4 */
+	ULONG                      SegmentSelectorCode32; /*     4     4 */
+	ULONG                      SegmentSelectorCode64; /*     8     4 */
+	ULONG                      SegmentSelectorData;  /*    12     4 */
+};
+
+struct WINDOWS_LIBOS_PARAMETERS {
+	ULONG                      HeaderLength;         /*     0     4 */
+	ULONG                      Length;               /*     4     4 */
+	ULONG                      Version;              /*     8     4 */
+	ULONG                      HostAbiVersion;       /*    12     4 */
+	enum WINDOWS_LIBOS_FLAGS   Flags;                /*    16     4 */
+	ULONG                      ExternalPid;          /*    20     4 */
+	ULONG                      NtGlobalFlag;         /*    24     4 */
+	ULONG64                    KernalTraceFlags;     /*    32     8 */
+	ULONG                      DesktopWidth;         /*    40     4 */
+	ULONG                      DesktopHeight;        /*    44     4 */
+	LONG                       VirtualMonitorCount;  /*    48     4 */
+	ULONG                      PhysicalMemorySize;   /*    52     4 */
+	ULONG64                    VirtualMemoryStart;   /*    56     8 */
+	ULONG64                    VirtualMemoryEnd;     /*    64     8 */
+	ULONG                      NumberOfProcessors;   /*    72     4 */
+	USHORT                     LanguageId;           /*    76     2 */
+	enum ContainerType         ContainerTypeEntry;   /*    80     4 */
+	struct PARAMETER_DESCRIPTOR RegistryUris;        /*    84     8 */
+	struct PARAMETER_DESCRIPTOR RegistryOutput;      /*    92     8 */
+	struct PARAMETER_DESCRIPTOR PersistentRegistryHives; /*   100     8 */
+	struct PARAMETER_DESCRIPTOR KnownDlls;           /*   108     8 */
+	struct UNIONFS_DEFINITION  FsDefinition;         /*   116     8 */
+	struct PARAMETER_DESCRIPTOR ScratchFolderUri;    /*   124     8 */
+	struct PARAMETER_DESCRIPTOR AppVfsPath;          /*   132     8 */
+	struct PARAMETER_DESCRIPTOR ApplicationArguments; /*   140     8 */
+	struct PARAMETER_DESCRIPTOR Environment;         /*   148     8 */
+	struct PARAMETER_DESCRIPTOR WorkingDirPath;      /*   156     8 */
+	struct PARAMETER_DESCRIPTOR HostName;            /*   164     8 */
+	struct PARAMETER_DESCRIPTOR DomainName;          /*   172     8 */
+	struct PARAMETER_DESCRIPTOR AddressList;         /*   180     8 */
+	struct PARAMETER_DESCRIPTOR PortMappings;        /*   188     8 */
+	struct PARAMETER_DESCRIPTOR TimeZoneKeyName;     /*   196     8 */
+	BOOLEAN                    DaylightTimeEnabled;  /*   204     1 */
+	struct PARAMETER_DESCRIPTOR StandardInput;       /*   208     8 */
+	struct PARAMETER_DESCRIPTOR StandardOutput;      /*   216     8 */
+	struct PARAMETER_DESCRIPTOR StandardError;       /*   224     8 */
+	struct PARAMETER_DESCRIPTOR ClockStreamUri;      /*   232     8 */
+	struct PARAMETER_DESCRIPTOR ProcessorConfiguration; /*   240     8 */
+	struct PARAMETER_DESCRIPTOR HostOsName;          /*   248     8 */
+	struct PARAMETER_DESCRIPTOR HostOsDistributionName; /*   256     8 */
+	struct PARAMETER_DESCRIPTOR HostOsReleaseName;   /*   264     8 */
+	struct PARAMETER_DESCRIPTOR HostOsExtendedReleaseName; /*   272     8 */
+	struct PARAMETER_DESCRIPTOR HostOsFullDistributionName; /*   280     8 */
+	struct PARAMETER_DESCRIPTOR BuildStamp;          /*   288     8 */
+	ULONG                      TraceFlagEntryCount;  /*   296     4 */
+	ULONG                      TraceFlagEntryTableOffset; /*   300     4 */
+	HeRingBufferInfo * *       HeRingBufferInfoList; /*   304     8 */
+};
