@@ -210,60 +210,6 @@ enum _DK_SOFTWARE_INTERRUPT_TYPE : int32_t
   DK_RAISED_SOFTWARE_EXCEPTION = 0x3,
 };
 
-struct _DK_PROCESS_CREATE_PARAMETERS_ENV
-{
-  ULONG Count;
-  PDK_KEY_VALUE_PAIR Pairs;
-};
-
-struct _DK_PROCESS_CREATE_PARAMETERS
-{
-  UNICODE_STRING ApplicationVfsPath;
-  UNICODE_STRING ApplicationArguments;
-  struct _DK_PROCESS_CREATE_PARAMETERS_ENV EnvironmentVariables;
-  DKHANDLE StandardInput;
-  DKHANDLE StandardOutput;
-  DKHANDLE StandardError;
-};
-
-struct _DK_STREAM_ATTRIBUTES
-{
-  DK_STREAM_TYPE_FLAGS Flags;
-  LONG64 CreationTime;
-  LONG64 LastWriteTime;
-  LONG64 FileAllocationSize;
-  LONG64 FileLength;
-  LONG64 TotalDirectorySize;
-  LONG64 AvailableDirectorySize;
-  ULONG LogicalBlockSize;
-  ULONG PhysicalBlockSize;
-  ULONG UniqueIdLength;
-  M128 UniqueId;
-};
-
-union _DK_THREAD_START_PARAMETERS_HostParameter
-{
-  PVOID Pointer;
-  ULONG64 U64;
-};
-
-struct _DK_THREAD_START_PARAMETERS
-{
-  union _DK_THREAD_START_PARAMETERS_HostParameter HostParameter;
-};
-
-struct _DK_THREAD_REGISTER_VALUES_X64
-{
-  ULONG64 FsBase;
-  ULONG64 GsBase;
-};
-
-typedef _DK_THREAD_REGISTER_VALUES_X64 DK_THREAD_REGISTER_VALUES;
-
-struct _DK_THREAD_CREATE_PARAMETERS
-{
-  DK_THREAD_REGISTER_VALUES RegisterValues;
-};
 
 enum _Enclave_DK_ENCLAVE_PAGE_PROTECTION_v1 : int32_t
 {
@@ -359,6 +305,61 @@ struct WINDOWS_LIBOS_PARAMETERS
   ULONG64 DbgStaticsAddress;
 };
 
+struct _DK_PROCESS_CREATE_PARAMETERS_ENV
+{
+  ULONG Count;
+  PDK_KEY_VALUE_PAIR Pairs;
+};
+
+struct _DK_PROCESS_CREATE_PARAMETERS
+{
+  UNICODE_STRING ApplicationVfsPath;
+  UNICODE_STRING ApplicationArguments;
+  struct _DK_PROCESS_CREATE_PARAMETERS_ENV EnvironmentVariables;
+  DKHANDLE StandardInput;
+  DKHANDLE StandardOutput;
+  DKHANDLE StandardError;
+};
+
+struct _DK_STREAM_ATTRIBUTES
+{
+  DK_STREAM_TYPE_FLAGS Flags;
+  LONG64 CreationTime;
+  LONG64 LastWriteTime;
+  LONG64 FileAllocationSize;
+  LONG64 FileLength;
+  LONG64 TotalDirectorySize;
+  LONG64 AvailableDirectorySize;
+  ULONG LogicalBlockSize;
+  ULONG PhysicalBlockSize;
+  ULONG UniqueIdLength;
+  M128 UniqueId;
+};
+
+union _DK_THREAD_START_PARAMETERS_HostParameter
+{
+  PVOID Pointer;
+  ULONG64 U64;
+};
+
+struct _DK_THREAD_START_PARAMETERS
+{
+  union _DK_THREAD_START_PARAMETERS_HostParameter HostParameter;
+};
+
+struct _DK_THREAD_REGISTER_VALUES_X64
+{
+  ULONG64 FsBase;
+  ULONG64 GsBase;
+};
+
+typedef _DK_THREAD_REGISTER_VALUES_X64 DK_THREAD_REGISTER_VALUES;
+
+struct _DK_THREAD_CREATE_PARAMETERS
+{
+  DK_THREAD_REGISTER_VALUES RegisterValues;
+};
+
 /* Functions */
 
 DKSTATUS  VirtualMemoryAllocate(PVOID DesiredAddress, SIZE_T DesiredLength, DK_ALLOCATION_TYPE AllocationType, DK_PAGE_PROTECTION Protect, PVOID *BaseAddress, PSIZE_T RegionLength);
@@ -419,6 +420,19 @@ DKSTATUS  StreamEventEnum(DKHANDLE Stream, DKHANDLE Event, PVOID EventEnumInfo, 
 DKSTATUS  PacketAssociate(DKHANDLE WaitCompletionPacketHandle, DKHANDLE IoCompletionHandle, DKHANDLE TargetObjectHandle, PVOID KeyContext, PVOID ApcContext, DKSTATUS IoStatus, ULONG_PTR IoStatusInformation, PBOOLEAN AlreadySignaled);
 DKSTATUS  PacketCreate(PDKHANDLE WaitCompletionPacketHandle);
 DKSTATUS  UnimplementedAbiCall();
+DKSTATUS  Enclave_LoadData_v1(PVOID loadAddress, SIZE_T size, const void *buffer, DK_ENCLAVE_PAGE_PROTECTION_V1 protect, PULONG sgxError);
+DKSTATUS  Enclave_InitializeSgx_v1(PVOID enclaveBaseAddress, const void *sigStructIn, PULONG sgxError);
+void  Enclave_NotifyThreadCreate_v1(PVOID tcsAddress);
+DKSTATUS  Enclave_PagesRemove_v1(PVOID address, SIZE_T size);
+DKSTATUS  Enclave_LoadPeBinary_v1(PVOID LoadAddress, DKHANDLE Stream, const UNICODE_STRING *ImageName);
+DKSTATUS  Enclave_PagesCommit_v1(PVOID address, SIZE_T size);
+DKSTATUS  Enclave_CallVbs_v1(PVOID EnclaveRoutine, PVOID Parameter, PVOID *ReturnValue);
+DKSTATUS  Enclave_CreateVbs_v1(PVOID EnclaveBaseAddress, SIZE_T EnclaveSize, DK_ENCLAVE_VBS_FLAGS_V1 Flags);
+DKSTATUS  Enclave_PagesProtect_v1(PVOID address, SIZE_T size, DK_ENCLAVE_PAGE_PROTECTION_V1 protect);
+DKSTATUS  Enclave_CreateSgx_v1(PVOID enclaveBaseAddress, SIZE_T enclaveSize, const void *secsIn, PULONG sgxError);
+DKSTATUS  Enclave_InitializeVbs_v1(PVOID EnclaveBaseAddress, ULONG ThreadCount);
+DKSTATUS  Enclave_Delete_v1(PVOID enclaveBaseAddress);
+DKSTATUS  Enclave_PagesFree_v1(PVOID address, SIZE_T size);
 
 /* Function typedefs */
 
