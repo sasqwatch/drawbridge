@@ -420,19 +420,19 @@ DKSTATUS  StreamEventEnum(DKHANDLE Stream, DKHANDLE Event, PVOID EventEnumInfo, 
 DKSTATUS  PacketAssociate(DKHANDLE WaitCompletionPacketHandle, DKHANDLE IoCompletionHandle, DKHANDLE TargetObjectHandle, PVOID KeyContext, PVOID ApcContext, DKSTATUS IoStatus, ULONG_PTR IoStatusInformation, PBOOLEAN AlreadySignaled);
 DKSTATUS  PacketCreate(PDKHANDLE WaitCompletionPacketHandle);
 DKSTATUS  UnimplementedAbiCall();
-DKSTATUS  Enclave_LoadData_v1(PVOID loadAddress, SIZE_T size, const void *buffer, DK_ENCLAVE_PAGE_PROTECTION_V1 protect, PULONG sgxError);
-DKSTATUS  Enclave_InitializeSgx_v1(PVOID enclaveBaseAddress, const void *sigStructIn, PULONG sgxError);
-void  Enclave_NotifyThreadCreate_v1(PVOID tcsAddress);
-DKSTATUS  Enclave_PagesRemove_v1(PVOID address, SIZE_T size);
-DKSTATUS  Enclave_LoadPeBinary_v1(PVOID LoadAddress, DKHANDLE Stream, const UNICODE_STRING *ImageName);
-DKSTATUS  Enclave_PagesCommit_v1(PVOID address, SIZE_T size);
-DKSTATUS  Enclave_CallVbs_v1(PVOID EnclaveRoutine, PVOID Parameter, PVOID *ReturnValue);
-DKSTATUS  Enclave_CreateVbs_v1(PVOID EnclaveBaseAddress, SIZE_T EnclaveSize, DK_ENCLAVE_VBS_FLAGS_V1 Flags);
-DKSTATUS  Enclave_PagesProtect_v1(PVOID address, SIZE_T size, DK_ENCLAVE_PAGE_PROTECTION_V1 protect);
-DKSTATUS  Enclave_CreateSgx_v1(PVOID enclaveBaseAddress, SIZE_T enclaveSize, const void *secsIn, PULONG sgxError);
-DKSTATUS  Enclave_InitializeVbs_v1(PVOID EnclaveBaseAddress, ULONG ThreadCount);
-DKSTATUS  Enclave_Delete_v1(PVOID enclaveBaseAddress);
-DKSTATUS  Enclave_PagesFree_v1(PVOID address, SIZE_T size);
+DKSTATUS  Enclave_LoadData(PVOID loadAddress, SIZE_T size, const void *buffer, DK_ENCLAVE_PAGE_PROTECTION_V1 protect, PULONG sgxError);
+DKSTATUS  Enclave_InitializeSgx(PVOID enclaveBaseAddress, const void *sigStructIn, PULONG sgxError);
+void  Enclave_NotifyThreadCreate(PVOID tcsAddress);
+DKSTATUS  Enclave_PagesRemove(PVOID address, SIZE_T size);
+DKSTATUS  Enclave_LoadPeBinary(PVOID LoadAddress, DKHANDLE Stream, const UNICODE_STRING *ImageName);
+DKSTATUS  Enclave_PagesCommit(PVOID address, SIZE_T size);
+DKSTATUS  Enclave_CallVbs(PVOID EnclaveRoutine, PVOID Parameter, PVOID *ReturnValue);
+DKSTATUS  Enclave_CreateVbs(PVOID EnclaveBaseAddress, SIZE_T EnclaveSize, DK_ENCLAVE_VBS_FLAGS_V1 Flags);
+DKSTATUS  Enclave_PagesProtect(PVOID address, SIZE_T size, DK_ENCLAVE_PAGE_PROTECTION_V1 protect);
+DKSTATUS  Enclave_CreateSgx(PVOID enclaveBaseAddress, SIZE_T enclaveSize, const void *secsIn, PULONG sgxError);
+DKSTATUS  Enclave_InitializeVbs(PVOID EnclaveBaseAddress, ULONG ThreadCount);
+DKSTATUS  Enclave_Delete(PVOID enclaveBaseAddress);
+DKSTATUS  Enclave_PagesFree(PVOID address, SIZE_T size);
 
 /* Function typedefs */
 
